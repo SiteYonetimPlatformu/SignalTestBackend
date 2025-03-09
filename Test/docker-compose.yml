@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  testapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - mssql
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=TestDb;User=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;Encrypt=False;
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql
+    environment:
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:

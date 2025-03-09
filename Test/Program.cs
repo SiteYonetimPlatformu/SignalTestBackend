@@ -22,8 +22,22 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDBContext>()
     .AddDefaultTokenProviders();
 
-var app = builder.Build();
 
+
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+*/
+
+var app = builder.Build();
+//app.UseCors("AllowAll");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -36,14 +50,14 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-app.UseEndpoints(endpoints =>
+using (var scope = app.Services.CreateScope())
 {
-    endpoints.MapControllers();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDBContext>();
+    context.Database.Migrate();  // Migration iþlemini çalýþtýrýr.
+}
 
-    endpoints.MapHub<NotificationHub>("/notificationHub");
-});
 
-//app.MapControllers();
+app.MapControllers();
 
 app.Run();
