@@ -36,6 +36,11 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 */
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080); // 5000 portunda dinle
+});
+
 var app = builder.Build();
 //app.UseCors("AllowAll");
 // Configure the HTTP request pipeline.
@@ -50,11 +55,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDBContext>();
-    context.Database.Migrate();  // Migration iþlemini çalýþtýrýr.
+    context.Database.Migrate();  // Migration iï¿½lemini ï¿½alï¿½ï¿½tï¿½rï¿½r.
 }
 
 
