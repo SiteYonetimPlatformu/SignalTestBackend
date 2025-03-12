@@ -5,7 +5,7 @@ using Test.Models;
 
 namespace Test.Data
 {
-     public class ApplicationDBContext : IdentityDbContext<AppUser>
+     public class ApplicationDBContext : DbContext
      {
          public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
                 : base(options)

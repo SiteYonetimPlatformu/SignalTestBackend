@@ -14,14 +14,22 @@ builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+/*
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+*/
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.AddDbContextPool<ApplicationDBContext>(
+      options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)
+   ));
+
+/*
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDBContext>()
     .AddDefaultTokenProviders();
-
+*/
 
 
 /*builder.Services.AddCors(options =>
@@ -38,7 +46,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(8080); // 5000 portunda dinle
+   // options.ListenAnyIP(8080); // 5000 portunda dinle
 });
 
 var app = builder.Build();
