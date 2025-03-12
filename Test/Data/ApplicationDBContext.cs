@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Test.Models;
 
 namespace Test.Data
 {
-     public class ApplicationDBContext : DbContext
-     {
-         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
-                : base(options)
-
-         {
-
-         }
-     }
+    // Identity kullanıyorsanız IdentityDbContext<AppUser> kullanımı uygundur.
+    public class ApplicationDBContext : IdentityDbContext<AppUser>
+    {
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
+            : base(options)
+        {            
+        }
+    }
 }

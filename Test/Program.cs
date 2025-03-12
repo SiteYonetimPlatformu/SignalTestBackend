@@ -1,62 +1,47 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Test;
 using Test.Data;
 using Test.Models;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 41)), // MySQL sürümünüze göre güncelleyin
+        mySqlOptions => mySqlOptions.EnableRetryOnFailure() 
+    )
+);
+
+// Identity servislerini ekleyin (AppUser ve IdentityRole kullanarak)
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    // Identity ayarlarını buradan yapılandırabilirsiniz.
+})
+.AddEntityFrameworkStores<ApplicationDBContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-/*
-builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
-*/
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContextPool<ApplicationDBContext>(
-      options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)
-   ));
-
-/*
-builder.Services.AddIdentity<AppUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDBContext>()
-    .AddDefaultTokenProviders();
-*/
-
-
-/*builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
-*/
-
 builder.WebHost.ConfigureKestrel(options =>
 {
-   // options.ListenAnyIP(8080); // 5000 portunda dinle
+    // İsteğe bağlı: Kestrel ayarlarını yapılandırabilirsiniz.
+    // options.ListenAnyIP(8080);
 });
 
 var app = builder.Build();
-//app.UseCors("AllowAll");
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseRouting();
 app.UseHttpsRedirection();
 
@@ -68,9 +53,8 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDBContext>();
-    context.Database.Migrate();  // Migration i�lemini �al��t�r�r.
+    context.Database.Migrate();
 }
-
 
 app.MapControllers();
 
