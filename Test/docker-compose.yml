@@ -8,20 +8,25 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mssql
+      - mysql  # Servis adı değişti
     environment:
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=TestDb;User=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;Encrypt=False;
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=Test;User=root;Password=Admin123+;AllowPublicKeyRetrieval=True;SslMode=none;
 
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: mssql
+  mysql:  # MSSQL yerine MySQL
+    image: mysql:8.0
+    container_name: mysql
     environment:
-      - SA_PASSWORD=YourStrong@Passw0rd
-      - ACCEPT_EULA=Y
+      - MYSQL_ROOT_PASSWORD=Admin123+  # Root şifresi
+      - MYSQL_DATABASE=Test  # Otomatik DB oluşturma
     ports:
-      - "1433:1433"
+      - "3307:3306"  # MySQL default port
     volumes:
-      - mssql-data:/var/opt/mssql
+      - mysql-data:/var/lib/mysql  # MySQL veri dizini
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
 volumes:
-  mssql-data:
+  mysql-data:  
