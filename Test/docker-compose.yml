@@ -11,8 +11,10 @@ services:
       - mysql  # Servis adı değişti
     environment:
       - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=Test;User=root;Password=Admin123+;AllowPublicKeyRetrieval=True;SslMode=none;
+    volumes:
+      - ./firebase-config.json:/app/firebase-config.json # Dosyayı mount et
 
-  mysql:  # MSSQL yerine MySQL
+  mysql:  
     image: mysql:8.0
     container_name: mysql
     environment:

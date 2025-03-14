@@ -48,7 +48,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<NotificationHub>("/notificationHub");
+
 
 
 using (var scope = app.Services.CreateScope())

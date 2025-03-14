@@ -11,5 +11,7 @@ namespace Test.Data
             : base(options)
         {            
         }
+
+        public DbSet<FcmToken> FcmTokens => Set<FcmToken>();
     }
 }
