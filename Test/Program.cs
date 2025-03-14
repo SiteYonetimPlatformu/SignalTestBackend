@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Test.Data;
 using Test.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Test;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<NotificationHub>("/notificationHub");
 
 
 using (var scope = app.Services.CreateScope())
